@@ -1,0 +1,31 @@
+package com.unbound.entities.client;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.unbound.bossesunbound;
+import com.unbound.entities.custom.GoblinEntity;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.resources.ResourceLocation;
+
+public class GoblinRenderer extends MobRenderer<GoblinEntity, GoblinModel<GoblinEntity>> {
+    public GoblinRenderer(EntityRendererProvider.Context context) {
+        super(context, new GoblinModel<>(context.bakeLayer(GoblinModel.LAYER_LOCATION)), 0.25f);
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(GoblinEntity entity) {
+        return ResourceLocation.fromNamespaceAndPath(bossesunbound.MODID, "textures/entity/goblin/goblin_default.png");
+    }
+
+    @Override
+    public void render(GoblinEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        if(entity.isBaby()) {
+            poseStack.scale(0.45f, 0.45f, 0.45f);
+        } else {
+            poseStack.scale(1f, 1f, 1f);
+        }
+
+        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
+    }
+}
