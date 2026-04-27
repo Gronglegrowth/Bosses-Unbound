@@ -1,21 +1,36 @@
 package com.unbound.entities.client;
 
+import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.unbound.bossesunbound;
+import com.unbound.entities.GoblinVariant;
 import com.unbound.entities.custom.GoblinEntity;
+import net.minecraft.Util;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.Map;
+
 public class GoblinRenderer extends MobRenderer<GoblinEntity, GoblinModel<GoblinEntity>> {
+    private static final Map<GoblinVariant, ResourceLocation> LOCATION_BY_VARIANT =
+            Util.make(Maps.newEnumMap(GoblinVariant.class), map -> {
+                map.put(GoblinVariant.DEFAULT,
+                        ResourceLocation.fromNamespaceAndPath(bossesunbound.MODID, "textures/entity/goblin/goblin_default.png"));
+                map.put(GoblinVariant.TRAVELER,
+                        ResourceLocation.fromNamespaceAndPath(bossesunbound.MODID, "textures/entity/goblin/goblin_traveler.png"));
+                map.put(GoblinVariant.ARMORED,
+                        ResourceLocation.fromNamespaceAndPath(bossesunbound.MODID, "textures/entity/goblin/goblin_armored.png"));
+            });
+
     public GoblinRenderer(EntityRendererProvider.Context context) {
         super(context, new GoblinModel<>(context.bakeLayer(GoblinModel.LAYER_LOCATION)), 0.25f);
     }
 
     @Override
     public ResourceLocation getTextureLocation(GoblinEntity entity) {
-        return ResourceLocation.fromNamespaceAndPath(bossesunbound.MODID, "textures/entity/goblin/goblin_default.png");
+        return LOCATION_BY_VARIANT.get(entity.getVariant());
     }
 
     @Override
