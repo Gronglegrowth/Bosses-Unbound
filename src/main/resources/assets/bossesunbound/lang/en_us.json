@@ -2,5 +2,6 @@
   "itemGroup.bossesunbound": "Example Mod Tab",
   "block.bossesunbound.example_block": "Example Block",
   "item.bossesunbound.example_item": "Example Item",
-  "entity.bossesunbound.goblin": "Goblin"
+  "entity.bossesunbound.goblin": "Goblin",
+  "entity.bossesunbound.goblin_king": "Goblin King"
 }
