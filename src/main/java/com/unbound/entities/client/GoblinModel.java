@@ -109,7 +109,9 @@ public class GoblinModel<T extends GoblinEntity> extends HierarchicalModel<T> {
 
     @Override
     public void setupAnim(GoblinEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        //resets the model position before an animation to ensure the animation doesnt break
         this.root().getAllParts().forEach(ModelPart::resetPose);
+        //rotate head method so it can look at the player
         this.applyHeadRotation(netHeadYaw, headPitch);
 
         this.animateWalk(GoblinAnimations.walk, limbSwing, limbSwingAmount, 2f, 2.5f);
