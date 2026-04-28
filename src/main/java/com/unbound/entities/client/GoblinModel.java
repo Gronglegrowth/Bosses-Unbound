@@ -5,15 +5,17 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.unbound.bossesunbound;
 import com.unbound.entities.custom.GoblinEntity;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 import javax.swing.text.html.parser.Entity;
 
-public class GoblinModel<T extends GoblinEntity> extends EntityModel<T> {
+public class GoblinModel<T extends GoblinEntity> extends HierarchicalModel<T> {
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(bossesunbound.MODID, "goblin"), "main");
     private final ModelPart goblin;
@@ -101,8 +103,24 @@ public class GoblinModel<T extends GoblinEntity> extends EntityModel<T> {
     }
 
     @Override
-    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.head.yRot = netHeadYaw * ((float) Math.PI / 180F);
-        this.head.xRot = headPitch * ((float) Math.PI / 180F);
+    public ModelPart root() {
+        return this.goblin;
+    }
+
+    @Override
+    public void setupAnim(GoblinEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.root().getAllParts().forEach(ModelPart::resetPose);
+        this.applyHeadRotation(netHeadYaw, headPitch);
+
+        this.animateWalk(GoblinAnimations.walk, limbSwing, limbSwingAmount, 2f, 2.5f);
+        this.animate(entity.idleAnimState, GoblinAnimations.idle, ageInTicks, 1f);
+    }
+
+    private void applyHeadRotation(float headYaw, float headPitch) {
+        headYaw = Mth.clamp(headYaw, -30f, 30f);
+        headPitch = Mth.clamp(headPitch, -25f, 45);
+
+        this.head.yRot = headYaw * ((float)Math.PI / 180f);
+        this.head.xRot = headPitch *  ((float)Math.PI / 180f);
     }
 }

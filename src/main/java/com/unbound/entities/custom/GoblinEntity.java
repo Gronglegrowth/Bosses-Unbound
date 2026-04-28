@@ -80,7 +80,7 @@ public class GoblinEntity extends Animal {
         // these are just your simple entity attributes, which you can add many of. check the attributes class to see the full list
         return Animal.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 8d)
-                .add(Attributes.MOVEMENT_SPEED, 0.15D)
+                .add(Attributes.MOVEMENT_SPEED, 0.2D)
                 .add(Attributes.FOLLOW_RANGE, 16.0D)
                 .add(Attributes.ATTACK_SPEED)
                 .add(Attributes.ATTACK_DAMAGE)
@@ -148,12 +148,12 @@ public class GoblinEntity extends Animal {
             case ARMORED -> { // the armored variant gets more armor
                 Objects.requireNonNull(this.getAttribute(Attributes.ARMOR)).setBaseValue(8.0D);
                 Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(10d);
-                Objects.requireNonNull(this.getAttribute(Attributes.MOVEMENT_SPEED)).setBaseValue(0.12D);
+                Objects.requireNonNull(this.getAttribute(Attributes.MOVEMENT_SPEED)).setBaseValue(0.18D);
                 this.setHealth(10f);
             }
             case TRAVELER -> { // the traveler variant gets more health and slightly more speed
                 Objects.requireNonNull(this.getAttribute(Attributes.ARMOR)).setBaseValue(2.0D);
-                Objects.requireNonNull(this.getAttribute(Attributes.MOVEMENT_SPEED)).setBaseValue(0.18D);
+                Objects.requireNonNull(this.getAttribute(Attributes.MOVEMENT_SPEED)).setBaseValue(0.22D);
                 Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(9d);
                 // when changing the max health attribute, it doesn't sync the health to the new value. we need to manually set that
                 this.setHealth(9f);
@@ -163,25 +163,21 @@ public class GoblinEntity extends Animal {
         }
     }
 
-    /*
-    ive temporarily disabled animations as we figure that out.
-     */
+    private void setupAnimationStates() {
+        if(this.idleAnimTimeout <= 0) {
+            this.idleAnimTimeout = 80;
+            this.idleAnimState.start(this.tickCount);
+        } else {
+            --this.idleAnimTimeout;
+        }
+    }
 
-//    private void setupAnimationStates() {
-//        if(this.idleAnimTimeout <= 0) {
-//            this.idleAnimTimeout = 80;
-//            this.idleAnimTimeout.start(this.tickCount);
-//        } else {
-//            --this.idleAnimTimeout;
-//        }
-//    }
+    @Override
+    public void tick() {
+        super.tick();
 
-//    @Override
-//    public void tick() {
-//        super.tick();
-//
-//        if(this.level().isClientSide()) {
-//            this.setupAnimationStates();
-//        }
-//    }
+        if(this.level().isClientSide()) {
+            this.setupAnimationStates();
+        }
+    }
 }

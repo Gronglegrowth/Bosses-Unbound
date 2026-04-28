@@ -2,7 +2,9 @@ package com.unbound;
 
 import com.mojang.logging.LogUtils;
 import com.unbound.entities.ModEntities;
+import com.unbound.entities.client.GoblinKingRenderer;
 import com.unbound.entities.client.GoblinRenderer;
+import com.unbound.event.ModEventBusEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,6 +20,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -34,6 +37,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
+import com.unbound.entities.client.GoblinModel;
+import com.unbound.entities.client.GoblinKingModel;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(bossesunbound.MODID)
@@ -77,6 +83,11 @@ public class bossesunbound {
 
         ModEntities.register(modEventBus);
 
+        if (net.neoforged.fml.loading.FMLEnvironment.dist.isClient()) {
+            modEventBus.addListener(ClientModEvents::onClientSetup);
+            modEventBus.addListener(ClientModEvents::registerRenderers);
+            modEventBus.addListener(ClientModEvents::registerLayers);
+        }
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (bossesunbound) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
@@ -113,14 +124,24 @@ public class bossesunbound {
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static class ClientModEvents {
-        @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-            EntityRenderers.register(ModEntities.GOBLIN.get(), GoblinRenderer::new);
         }
+
+        public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerEntityRenderer(ModEntities.GOBLIN.get(), GoblinRenderer::new);
+            event.registerEntityRenderer(ModEntities.GOBLIN_KING.get(), GoblinKingRenderer::new);
+        }
+
+        public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+            System.out.println(">>> REGISTERING LAYERS");
+            event.registerLayerDefinition(GoblinModel.LAYER_LOCATION, GoblinModel::createBodyLayer);
+            event.registerLayerDefinition(GoblinKingModel.LAYER_LOCATION, GoblinKingModel::createBodyLayer);
+        }
+
     }
 }
