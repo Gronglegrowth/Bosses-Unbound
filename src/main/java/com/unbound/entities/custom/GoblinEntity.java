@@ -6,6 +6,7 @@ this is where all of the mod functionality should be, including ai
  */
 
 import com.unbound.entities.GoblinVariant;
+import com.unbound.items.ModItems;
 import net.minecraft.Util;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -16,14 +17,20 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -31,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class GoblinEntity extends Animal {
+public class GoblinEntity extends Monster {
 
     public static final AnimationState idleAnimState = new AnimationState();
     private int idleAnimTimeout = 0;
@@ -49,7 +56,7 @@ public class GoblinEntity extends Animal {
             ResourceLocation.fromNamespaceAndPath("bossesunbound", "entities/goblin_armored"));
 
 
-    public GoblinEntity(EntityType<? extends Animal> p_27557_, Level p_27558_) {
+    public GoblinEntity(EntityType<? extends Monster> p_27557_, Level p_27558_) {
         super(p_27557_, p_27558_);
     }
 
@@ -69,11 +76,14 @@ public class GoblinEntity extends Animal {
         // we are currently using a placeholder ai
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
-        this.goalSelector.addGoal(1, new PanicGoal(this, 2.0));
+        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2, true));
 
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this)); // retaliate when hit
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true)); // hunt players
     }
 
     public static AttributeSupplier.Builder createAttributes(){
@@ -84,22 +94,13 @@ public class GoblinEntity extends Animal {
                 .add(Attributes.FOLLOW_RANGE, 16.0D)
                 .add(Attributes.ATTACK_SPEED)
                 .add(Attributes.ATTACK_DAMAGE)
-                .add(Attributes.ARMOR);
-    }
-
-    @Override
-    public boolean isFood(ItemStack itemStack) {
-        return false;
+                .add(Attributes.ARMOR)
+                .add(Attributes.FOLLOW_RANGE, 40D);
     }
 
     @Override
     protected BodyRotationControl createBodyControl() {
         return new BodyRotationControl(this);
-    }
-
-    @Override
-    public @Nullable AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
-        return null;
     }
 
     // adding variant code below
@@ -140,6 +141,19 @@ public class GoblinEntity extends Animal {
         GoblinVariant variant = GoblinVariant.getRandom(this.random); // calls the random variant method in the GoblinVariant enum
         this.setVariant(variant);
         this.applyVariantAttributes(); // calling the method below this one
+
+        // certain variants have certain weapons
+        switch (variant) {
+            case ARMORED -> this.setItemInHand(InteractionHand.MAIN_HAND,
+                    new ItemStack(ModItems.GOBLIN_HATCHET.get()));
+
+            case DEFAULT -> this.setItemInHand(InteractionHand.MAIN_HAND,
+                    new ItemStack(ModItems.GOBLIN_DAGGER.get()));
+
+            default -> this.setItemInHand(InteractionHand.MAIN_HAND,
+                    new ItemStack(Items.AIR));
+        }
+
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
 

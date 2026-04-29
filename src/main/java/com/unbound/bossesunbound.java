@@ -5,6 +5,7 @@ import com.unbound.entities.ModEntities;
 import com.unbound.entities.client.GoblinKingRenderer;
 import com.unbound.entities.client.GoblinRenderer;
 import com.unbound.event.ModEventBusEvents;
+import com.unbound.items.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -65,7 +66,11 @@ public class bossesunbound {
 
     // Creates a creative tab with the id "bossesunbound:example_tab" for the example item, that is placed after the combat tab
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.bossesunbound")).withTabsBefore(CreativeModeTabs.COMBAT).icon(() -> EXAMPLE_ITEM.get().getDefaultInstance()).displayItems((parameters, output) -> {
-        output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
+        output.accept(ModItems.KINGS_MACE.get());
+        output.accept(ModItems.GOBLIN_DAGGER.get());
+        output.accept(ModItems.GOBLIN_HATCHET.get());
+        output.accept(ModItems.GOBLIN_SPAWN_EGG.get());
+        output.accept(ModItems.GOBLIN_KING_SPAWN_EGG.get());// Add the example item to the tab. For your own tabs, this method is preferred over the event
     }).build());
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
@@ -82,6 +87,7 @@ public class bossesunbound {
         CREATIVE_MODE_TABS.register(modEventBus);
 
         ModEntities.register(modEventBus);
+        ModItems.register(modEventBus);
 
         if (net.neoforged.fml.loading.FMLEnvironment.dist.isClient()) {
             modEventBus.addListener(ClientModEvents::onClientSetup);
@@ -114,6 +120,9 @@ public class bossesunbound {
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) event.accept(EXAMPLE_BLOCK_ITEM);
+//        if (event.getTabKey() == CreativeModeTabs.COMBAT) event.accept(ModItems.KINGS_MACE);
+//        if (event.getTabKey() == CreativeModeTabs.COMBAT) event.accept(ModItems.GOBLIN_DAGGER);
+//        if (event.getTabKey() == CreativeModeTabs.COMBAT) event.accept(ModItems.GOBLIN_HATCHET);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

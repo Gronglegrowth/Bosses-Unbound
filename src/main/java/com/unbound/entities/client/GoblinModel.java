@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.unbound.bossesunbound;
 import com.unbound.entities.custom.GoblinEntity;
+import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -12,10 +13,11 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.HumanoidArm;
 
 import javax.swing.text.html.parser.Entity;
 
-public class GoblinModel<T extends GoblinEntity> extends HierarchicalModel<T> {
+public class GoblinModel<T extends GoblinEntity> extends HierarchicalModel<T> implements ArmedModel {
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(bossesunbound.MODID, "goblin"), "main");
     private final ModelPart goblin;
@@ -125,4 +127,25 @@ public class GoblinModel<T extends GoblinEntity> extends HierarchicalModel<T> {
         this.head.yRot = headYaw * ((float)Math.PI / 180f);
         this.head.xRot = headPitch *  ((float)Math.PI / 180f);
     }
-}
+
+    public ModelPart getArm(boolean right) {
+        return right ? this.right_arm : this.left_arm;
+    }
+
+    public ModelPart getArm(net.minecraft.world.entity.HumanoidArm arm) {
+        return arm == net.minecraft.world.entity.HumanoidArm.RIGHT
+                ? this.right_arm
+                : this.left_arm;
+    }
+
+    @Override
+    public void translateToHand(HumanoidArm arm, PoseStack poseStack) {
+        this.root().translateAndRotate(poseStack);
+        this.body.translateAndRotate(poseStack);
+        this.torso.translateAndRotate(poseStack);
+
+        ModelPart modelpart = this.getArm(arm);
+        modelpart.translateAndRotate(poseStack);
+
+        poseStack.translate(-0.0D, -0.3D, -0.1D);
+    }}

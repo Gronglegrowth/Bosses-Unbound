@@ -1,7 +1,12 @@
 {
-  "itemGroup.bossesunbound": "Example Mod Tab",
+  "itemGroup.bossesunbound": "Bosses Unbound",
   "block.bossesunbound.example_block": "Example Block",
   "item.bossesunbound.example_item": "Example Item",
   "entity.bossesunbound.goblin": "Goblin",
-  "entity.bossesunbound.goblin_king": "Goblin King"
+  "entity.bossesunbound.goblin_king": "Goblin King",
+  "item.bossesunbound.kings_mace": "King's Mace",
+  "item.bossesunbound.goblin_dagger": "Goblin Dagger",
+  "item.bossesunbound.goblin_hatchet": "Goblin Hatchet",
+  "item.bossesunbound.goblin_spawn_egg": "Goblin Spawn Egg",
+  "item.bossesunbound.goblin_king_spawn_egg": "Goblin King Spawn Egg"
 }
