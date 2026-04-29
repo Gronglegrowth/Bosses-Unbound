@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "bossesunbound:item/goblin_king_spawn_egg"
+  }
+}
