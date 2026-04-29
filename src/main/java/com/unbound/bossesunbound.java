@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -38,7 +39,6 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
-import com.unbound.entities.client.GoblinModel;
 import com.unbound.entities.client.GoblinKingModel;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
@@ -142,15 +142,19 @@ public class bossesunbound {
         }
 
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerEntityRenderer(ModEntities.GOBLIN.get(), GoblinRenderer::new);
+//            event.registerEntityRenderer(ModEntities.GOBLIN.get(), GoblinRenderer::new);
             event.registerEntityRenderer(ModEntities.GOBLIN_KING.get(), GoblinKingRenderer::new);
         }
 
         public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
             System.out.println(">>> REGISTERING LAYERS");
-            event.registerLayerDefinition(GoblinModel.LAYER_LOCATION, GoblinModel::createBodyLayer);
+//            event.registerLayerDefinition(GoblinModel.LAYER_LOCATION, GoblinModel::createBodyLayer);
             event.registerLayerDefinition(GoblinKingModel.LAYER_LOCATION, GoblinKingModel::createBodyLayer);
         }
 
+    }
+
+    public static ResourceLocation locate(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 }

@@ -21,11 +21,16 @@ public class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, bossesunbound.MODID);
 
+    public static final Supplier<EntityType<GoblinEntity>> GOBLIN =
+            ENTITY_TYPES.register("goblin", () -> EntityType.Builder.of((EntityType.EntityFactory<GoblinEntity>) GoblinEntity::new, MobCategory.MONSTER)
+                    .sized(1.25F, 1.875F).build(bossesunbound.MODID + ":" + "goblin"));
+
+
 
     // this is where each entity we want to register will be instantiated. we specify the entity type, as well as a couple of other details like hitbox
-    public static final Supplier<EntityType<GoblinEntity>> GOBLIN =
-            ENTITY_TYPES.register("goblin", () -> EntityType.Builder.of(GoblinEntity::new, MobCategory.CREATURE)
-                    .sized(0.7f, 0.9f).build("goblin"));
+//    public static final Supplier<EntityType<GoblinEntity>> GOBLIN =
+//            ENTITY_TYPES.register("goblin", () -> EntityType.Builder.of(GoblinEntity::new, MobCategory.CREATURE)
+//                    .sized(0.7f, 0.9f).build("goblin"));
 
     public static final Supplier<EntityType<GoblinKingEntity>> GOBLIN_KING =
             ENTITY_TYPES.register("goblin_king", () -> EntityType.Builder.of(GoblinKingEntity::new, MobCategory.MONSTER)
