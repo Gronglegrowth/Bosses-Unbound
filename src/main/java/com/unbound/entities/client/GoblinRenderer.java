@@ -1,5 +1,7 @@
 package com.unbound.entities.client;
 
+import com.cmdpro.databank.model.entity.DatabankEntityModel;
+import com.cmdpro.databank.model.entity.DatabankLivingEntityRenderer;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.unbound.bossesunbound;
@@ -14,7 +16,7 @@ import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 
 import java.util.Map;
 
-public class GoblinRenderer extends MobRenderer<GoblinEntity, GoblinModel<GoblinEntity>> {
+public class GoblinRenderer extends DatabankLivingEntityRenderer<GoblinEntity> {
     private static final Map<GoblinVariant, ResourceLocation> LOCATION_BY_VARIANT =
             Util.make(Maps.newEnumMap(GoblinVariant.class), map -> {
                 map.put(GoblinVariant.DEFAULT,
@@ -25,11 +27,16 @@ public class GoblinRenderer extends MobRenderer<GoblinEntity, GoblinModel<Goblin
                         ResourceLocation.fromNamespaceAndPath(bossesunbound.MODID, "textures/entity/goblin/goblin_armored.png"));
             });
 
-    public GoblinRenderer(EntityRendererProvider.Context context) {
-        super(context, new GoblinModel<>(context.bakeLayer(GoblinModel.LAYER_LOCATION)), 0.25f);
-
-        this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
+    public GoblinRenderer(EntityRendererProvider.Context context, DatabankEntityModel<GoblinEntity> model, float shadowRadius) {
+        super(context, model, shadowRadius);
+//        this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
     }
+
+//    public GoblinRenderer(EntityRendererProvider.Context context) {
+//        super(context, new GoblinModel<>(context.bakeLayer(GoblinModel.LAYER_LOCATION)), 0.25f);
+//
+//        this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
+//    }
 
     @Override
     public ResourceLocation getTextureLocation(GoblinEntity entity) {

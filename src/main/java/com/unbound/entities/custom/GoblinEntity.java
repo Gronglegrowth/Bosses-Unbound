@@ -5,6 +5,9 @@ the main class for the smaller goblins
 this is where all of the mod functionality should be, including ai
  */
 
+import com.cmdpro.databank.model.animation.DatabankAnimationReference;
+import com.cmdpro.databank.model.animation.DatabankAnimationState;
+import com.cmdpro.databank.model.animation.DatabankEntityAnimationState;
 import com.unbound.entities.GoblinVariant;
 import com.unbound.items.ModItems;
 import net.minecraft.Util;
@@ -40,7 +43,8 @@ import java.util.Objects;
 
 public class GoblinEntity extends Monster {
 
-    public static final AnimationState idleAnimState = new AnimationState();
+    public DatabankAnimationState animState = new DatabankEntityAnimationState("idle", this)
+            .addAnim(new DatabankAnimationReference("idle", (state, anim) -> {}, (state, anim) -> {}));
     private int idleAnimTimeout = 0;
 
     // this is where we add the variants
@@ -177,21 +181,21 @@ public class GoblinEntity extends Monster {
         }
     }
 
-    private void setupAnimationStates() {
-        if(this.idleAnimTimeout <= 0) {
-            this.idleAnimTimeout = 80;
-            this.idleAnimState.start(this.tickCount);
-        } else {
-            --this.idleAnimTimeout;
-        }
-    }
+//    private void setupAnimationStates() {
+//        if(this.idleAnimTimeout <= 0) {
+//            this.idleAnimTimeout = 80;
+//            this.idleAnimState.start(this.tickCount);
+//        } else {
+//            --this.idleAnimTimeout;
+//        }
+//    }
 
     @Override
     public void tick() {
         super.tick();
 
         if(this.level().isClientSide()) {
-            this.setupAnimationStates();
+//            this.setupAnimationStates();
         }
     }
 }
