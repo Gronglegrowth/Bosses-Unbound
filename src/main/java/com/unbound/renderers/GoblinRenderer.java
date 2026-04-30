@@ -1,21 +1,18 @@
-package com.unbound.entities.client;
+package com.unbound.renderers;
 
 import com.cmdpro.databank.model.DatabankModel;
 import com.cmdpro.databank.model.DatabankModels;
-import com.cmdpro.databank.model.entity.DatabankEntityModel;
 import com.cmdpro.databank.model.entity.DatabankLivingEntityModel;
 import com.cmdpro.databank.model.entity.DatabankLivingEntityRenderer;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.unbound.bossesunbound;
+import com.unbound.BossesUnbound;
 import com.unbound.entities.GoblinVariant;
-import com.unbound.entities.custom.GoblinEntity;
+import com.unbound.entities.GoblinEntity;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
 
@@ -46,7 +43,7 @@ public class GoblinRenderer extends DatabankLivingEntityRenderer<GoblinEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(GoblinEntity entity) {
-        return LOCATION_BY_VARIANT.get(entity.getVariant());
+        return BossesUnbound.locate( LOCATION_BY_VARIANT.get(entity.getVariant()) );
     }
 
     @Override
@@ -62,16 +59,17 @@ public class GoblinRenderer extends DatabankLivingEntityRenderer<GoblinEntity> {
 
     public static class Model extends DatabankLivingEntityModel<GoblinEntity> {
         public DatabankModel model;
+
         public DatabankModel getModel() {
             if (model == null) {
-                model = DatabankModels.models.get(bossesunbound.locate("goblin"));
+                model = DatabankModels.models.get(BossesUnbound.locate("goblin"));
             }
             return model;
         }
+
         @Override
         public ResourceLocation getTextureLocation() {
-            return bossesunbound.locate(LOCATION_BY_VARIANT.get(entity.getVariant()));
-//            return bossesunbound.locate("textures/entity/goblin.png");
+            return BossesUnbound.locate("textures/entity/goblin.png"); // default
         }
 
         @Override
