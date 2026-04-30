@@ -19,6 +19,10 @@ import net.minecraft.world.phys.Vec2;
 import java.util.Map;
 
 public class GoblinRenderer extends DatabankLivingEntityRenderer<GoblinEntity> {
+    public DefaultModel defaultModel;
+    public TravelerModel travelerModel;
+    public ArmoredModel armoredModel;
+
 //    private static final Map<GoblinVariant, ResourceLocation> LOCATION_BY_VARIANT =
 //            Util.make(Maps.newEnumMap(GoblinVariant.class), map -> {
 //                map.put(GoblinVariant.DEFAULT,
@@ -38,7 +42,16 @@ public class GoblinRenderer extends DatabankLivingEntityRenderer<GoblinEntity> {
 //        this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
 
     public GoblinRenderer(EntityRendererProvider.Context context) {
-        super(context, new Model(), 0.25f);
+        super(context, new DefaultModel(), 0.25f);
+
+        this.defaultModel = new DefaultModel();
+        this.travelerModel = new TravelerModel();
+        this.armoredModel = new ArmoredModel();
+    }
+
+    @Override
+    public DatabankLivingEntityModel<GoblinEntity> getModel(GoblinEntity entity) {
+        return defaultModel; // this is to be switched up by variant. you can do that i'm sure ~Esét
     }
 
     @Override
@@ -57,7 +70,7 @@ public class GoblinRenderer extends DatabankLivingEntityRenderer<GoblinEntity> {
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
 
-    public static class Model extends DatabankLivingEntityModel<GoblinEntity> {
+    public static class DefaultModel extends DatabankLivingEntityModel<GoblinEntity> {
         public DatabankModel model;
 
         public DatabankModel getModel() {
@@ -69,7 +82,7 @@ public class GoblinRenderer extends DatabankLivingEntityRenderer<GoblinEntity> {
 
         @Override
         public ResourceLocation getTextureLocation() {
-            return BossesUnbound.locate("textures/entity/goblin.png"); // default
+            return BossesUnbound.locate("textures/entity/goblin_default.png");
         }
 
         @Override
@@ -80,6 +93,20 @@ public class GoblinRenderer extends DatabankLivingEntityRenderer<GoblinEntity> {
             float bodyRot = Mth.rotLerp(partialTick, pEntity.yBodyRotO, pEntity.yBodyRot);
             modelPose.stringToPart.get("head").rotation.x = rot.x * (float) (Math.PI / 180.0);
             modelPose.stringToPart.get("head").rotation.y = (rot.y-bodyRot) * (float) (Math.PI / 180.0);
+        }
+    }
+
+    public static class TravelerModel extends DefaultModel {
+        @Override
+        public ResourceLocation getTextureLocation() {
+            return BossesUnbound.locate("textures/entity/goblin_traveler.png");
+        }
+    }
+
+    public static class ArmoredModel extends DefaultModel {
+        @Override
+        public ResourceLocation getTextureLocation() {
+            return BossesUnbound.locate("textures/entity/goblin_armored.png");
         }
     }
 }
